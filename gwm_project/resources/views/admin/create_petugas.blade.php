@@ -320,9 +320,15 @@
 
         <ul class="nav-menu">
             <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="{{ route('admin.dashboard') }}" class="nav-link">
                     <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
                     Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.create_petugas') }}" class="nav-link active">
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                    Buat Akun Petugas
                 </a>
             </li>
             <li class="nav-item">
@@ -374,107 +380,66 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="page-header">
-            <h1>Dashboard Administrator</h1>
-            <p>Monitor kondisi kekeringan di seluruh wilayah Gunungkidul</p>
+            <h1>Buat Akun Petugas</h1>
+            <p>Tambahkan akun login baru untuk petugas lapangan</p>
         </div>
 
-        <!-- Four Stat Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Total Laporan</span>
-                    <span class="stat-value">0</span>
-                </div>
-                <div class="stat-icon icon-blue">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                </div>
+        @if(session('success'))
+            <div style="background: #10b981; color: white; padding: 12px 20px; border-radius: var(--card-radius); margin-bottom: 24px; font-weight: 500;">
+                {{ session('success') }}
             </div>
+        @endif
 
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Laporan Kritis</span>
-                    <span class="stat-value">0</span>
-                </div>
-                <div class="stat-icon icon-red">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                </div>
+        @if($errors->any())
+            <div style="background: #ef4444; color: white; padding: 12px 20px; border-radius: var(--card-radius); margin-bottom: 24px; font-weight: 500;">
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
+        @endif
 
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Warga Terdampak</span>
-                    <div>
-                        <span class="stat-value">0</span>
-                        <span class="stat-extra">jiwa</span>
-                    </div>
+        <div class="chart-card" style="height: auto; max-width: 600px;">
+            <h3>Detail Akun Baru</h3>
+            <form action="{{ route('admin.store_petugas') }}" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+                @csrf
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Kecamatan</label>
+                    <select name="name" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; background-color: white;">
+                        <option value="" disabled selected>Pilih Kecamatan</option>
+                        <option value="Wonosari">Wonosari</option>
+                        <option value="Playen">Playen</option>
+                        <option value="Patuk">Patuk</option>
+                        <option value="Gedangsari">Gedangsari</option>
+                        <option value="Nglipar">Nglipar</option>
+                        <option value="Ngawen">Ngawen</option>
+                        <option value="Semin">Semin</option>
+                        <option value="Ponjong">Ponjong</option>
+                        <option value="Karangmojo">Karangmojo</option>
+                        <option value="Paliyan">Paliyan</option>
+                        <option value="Saptosari">Saptosari</option>
+                        <option value="Tepus">Tepus</option>
+                        <option value="Tanjungsari">Tanjungsari</option>
+                        <option value="Rongkop">Rongkop</option>
+                        <option value="Girisubo">Girisubo</option>
+                        <option value="Panggang">Panggang</option>
+                        <option value="Purwosari">Purwosari</option>
+                        <option value="Semanu">Semanu</option>
+                    </select>
                 </div>
-                <div class="stat-icon icon-orange">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Username (Email)</label>
+                    <input type="text" name="email" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
                 </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Tervalidasi</span>
-                    <span class="stat-value">0</span>
+                <div>
+                    <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Password Login (Min. 8)</label>
+                    <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
                 </div>
-                <div class="stat-icon icon-green">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
+                <div style="margin-top: 10px;">
+                    <button type="submit" style="padding: 12px 24px; background-color: #0ea5e9; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Simpan Akun Petugas</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Charts Grid -->
-        <div class="charts-row">
-            <!-- Pie Chart Container -->
-            <div class="chart-card">
-                <h3>Distribusi Tingkat Kekeringan</h3>
-                <div class="chart-container" style="max-height: 220px;">
-                    <canvas id="pieChart"></canvas>
-                </div>
-                
-                <div class="custom-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #10b981;"></div>
-                        Rendah: 0
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #eab308;"></div>
-                        Sedang: 0
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #f97316;"></div>
-                        Tinggi: 0
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #ef4444;"></div>
-                        Kritis: 0
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bar Chart Container -->
-            <div class="chart-card">
-                <h3>Warga Terdampak per Area</h3>
-                <div class="chart-container">
-                    <canvas id="barChart"></canvas>
-                </div>
-            </div>
+            </form>
         </div>
     </main>
 
