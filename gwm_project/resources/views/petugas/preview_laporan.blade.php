@@ -466,13 +466,13 @@
 
         <ul class="nav-menu">
             <li class="nav-item">
-                <a href="#" class="active">
+                <a href="{{ route('petugas.dashboard') }}">
                     <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#">
+                <a href="#" class="active">
                     <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                     Laporan
                 </a>
@@ -503,148 +503,118 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="top-header">
-            <div class="page-title">
-                <h1>Dashboard</h1>
-                <p>Selamat datang kembali, {{ auth()->user()->name ?? 'Budi Santoso' }}</p>
+        <div style="margin-bottom: 24px;">
+            <a href="{{ route('petugas.edit_laporan', $laporan->id) }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-dark); text-decoration: none; font-size: 14px; font-weight: 600;">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Kembali
+            </a>
+        </div>
+        
+        <div class="page-title" style="margin-bottom: 32px;">
+            <h1 style="font-size: 28px; color: var(--text-dark);">Preview Laporan</h1>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 48px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); max-width: 800px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; letter-spacing: 0.5px;">LAPORAN KONDISI KEKERINGAN</h2>
+                <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Gunungkidul Water Monitor (GWM)</p>
+                <div style="font-size: 12px; color: var(--text-gray);">
+                    Tanggal: {{ $laporan->created_at->format('d F Y') }} <span style="margin: 0 8px; color: #cbd5e1;">|</span> Kecamatan: {{ $laporan->kecamatan }}
+                </div>
             </div>
-            <div class="top-pill">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                Kecamatan {{ auth()->user()->name ?? 'Purwosari' }}
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin-bottom: 32px;">
+
+            <!-- 1. Informasi Wilayah -->
+            <div style="margin-bottom: 32px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">1. Informasi Wilayah</h3>
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: 12px; font-size: 13px;">
+                    <div style="color: var(--text-gray);">Kecamatan</div>
+                    <div style="font-weight: 600; color: var(--text-dark);">: {{ $laporan->kecamatan }}</div>
+                    <div style="color: var(--text-gray);">Kelurahan</div>
+                    <div style="font-weight: 600; color: var(--text-dark);">: {{ $laporan->kelurahan ?? '-' }}</div>
+                </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #f1f5f9; margin-bottom: 32px;">
+
+            <!-- 2. Kondisi Kekeringan -->
+            <div style="margin-bottom: 32px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">2. Kondisi Kekeringan</h3>
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: 16px; font-size: 13px; align-items: center;">
+                    <div style="color: var(--text-gray);">Kondisi Air</div>
+                    <div>
+                        : <span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #ef4444; border-radius: 20px; font-size: 11px; font-weight: 600;">{{ $laporan->kondisi_air ?? 'Kritis' }}</span>
+                    </div>
+                    <div style="color: var(--text-gray);">Warga Terdampak</div>
+                    <div style="font-weight: 700; color: var(--text-dark);">: {{ $laporan->warga_terdampak ?? 0 }} jiwa</div>
+                    <div style="color: var(--text-gray);">Durasi</div>
+                    <div style="font-weight: 700; color: var(--text-dark);">: {{ $laporan->durasi_kekeringan ?? 0 }} hari</div>
+                </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #f1f5f9; margin-bottom: 32px;">
+
+            <!-- 3. Deskripsi Kondisi -->
+            <div style="margin-bottom: 32px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">3. Deskripsi Kondisi</h3>
+                <p style="font-size: 13px; line-height: 1.6; color: var(--text-gray);">
+                    {{ $laporan->keterangan ?? '-' }}
+                </p>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #f1f5f9; margin-bottom: 32px;">
+
+            <!-- 4. Dokumentasi -->
+            <div style="margin-bottom: 48px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">4. Dokumentasi</h3>
+                @if($laporan->foto)
+                    @php
+                        $fotosArray = json_decode($laporan->foto, true);
+                        if (!is_array($fotosArray)) {
+                            $fotosArray = [$laporan->foto];
+                        }
+                    @endphp
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        @foreach($fotosArray as $index => $fotoPath)
+                            <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; width: 200px; background: #f8fafc;">
+                                <img src="{{ asset('storage/' . $fotoPath) }}" alt="Dokumentasi {{ $index + 1 }}" style="width: 100%; height: 150px; object-fit: cover; display: block;">
+                                <div style="padding: 12px; text-align: center; font-size: 11px; color: var(--text-gray); border-top: 1px solid #e2e8f0;">Foto {{ $index + 1 }}</div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; max-width: 400px; background: #f8fafc;">
+                        <div style="padding: 40px 20px; text-align: center; color: #94a3b8;">
+                            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            <p style="font-size: 12px;">Tidak ada dokumentasi</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin-bottom: 24px;">
+
+            <div style="text-align: center; color: #94a3b8; font-size: 11px; line-height: 1.6;">
+                Laporan ini dibuat melalui sistem GWM (Gunungkidul Water Monitor)<br>
+                Periksa kembali data sebelum mengirim laporan
             </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Total Laporan</span>
-                    <span class="stat-val">0</span>
-                </div>
-                <div class="stat-icon icon-blue">
-                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Menunggu Validasi</span>
-                    <span class="stat-val">0</span>
-                </div>
-                <div class="stat-icon icon-yellow">
-                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Sedang Diproses</span>
-                    <span class="stat-val">0</span>
-                </div>
-                <div class="stat-icon icon-teal">
-                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Selesai</span>
-                    <span class="stat-val">0</span>
-                </div>
-                <div class="stat-icon icon-green">
-                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="middle-grid">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Distribusi Status Laporan</h3>
-                </div>
-                <div class="chart-container-inner">
-                    <canvas id="barChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3>Tindakan Cepat</h3>
-                </div>
-                <div class="actions-list">
-                    <a href="{{ route('petugas.create_laporan') }}" class="action-btn btn-primary">
-                        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Buat Laporan Baru
-                    </a>
-                    <a href="#" class="action-btn btn-outline">
-                        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        Lihat Draft Laporan
-                    </a>
-                    <a href="#" class="action-btn btn-outline">
-                        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        Lihat Semua Laporan
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header-between">
-                <div class="card-header-left">
-                    <h3>Laporan Terbaru</h3>
-                </div>
-                <a href="#" class="link-all">Lihat Semua</a>
-            </div>
-            
-            <div class="empty-state">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                <p>Belum ada data laporan tersedia saat ini.</p>
-            </div>
+        <!-- Float Footer -->
+        <div style="position: sticky; bottom: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); padding: 20px 40px; margin: 40px -40px -40px -40px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 16px;">
+            <a href="{{ route('petugas.edit_laporan', $laporan->id) }}" style="display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: white; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--text-dark); cursor: pointer; text-decoration: none; font-family: inherit;">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Edit Laporan
+            </a>
+            <form action="{{ route('petugas.submit_laporan', $laporan->id) }}" method="POST">
+                @csrf
+                <button type="submit" style="display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: #6366f1; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; color: white; cursor: pointer; font-family: inherit; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+                    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Submit Laporan
+                </button>
+            </form>
         </div>
     </main>
-
-    <script>
-        // Draw empty chart matching the style
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        
-        // Buat custom gradient batang animasi
-        const gradient = barCtx.createLinearGradient(0, 200, 0, 0);
-        gradient.addColorStop(0, '#528fc3');
-        gradient.addColorStop(1, '#81bde8');
-
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Validasi', 'Proses', 'Selesai'],
-                datasets: [{
-                    label: 'Status Laporan',
-                    // Gunakan data dummy kosong 0 karena belum ada
-                    data: [0, 0, 0],
-                    backgroundColor: gradient,
-                    borderRadius: 6,
-                    barPercentage: 0.6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 1, // Skala kecil karena datanya nol
-                        ticks: { stepSize: 1, color: '#94a3b8' },
-                        grid: { color: '#f1f5f9' }
-                    },
-                    x: {
-                        ticks: { color: '#64748b', font: { weight: '500' } },
-                        grid: { display: false }
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>

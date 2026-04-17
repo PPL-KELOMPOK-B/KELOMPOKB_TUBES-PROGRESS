@@ -54,4 +54,13 @@ Route::middleware(['auth'])->group(function () {
     
     // Petugas Routes
     Route::get('/petugas/dashboard', [DashboardController::class, 'petugasIndex'])->name('petugas.dashboard');
+    Route::get('/petugas/laporan/create', [DashboardController::class, 'createLaporan'])->name('petugas.create_laporan');
+    Route::post('/petugas/laporan', [DashboardController::class, 'storeLaporan'])->name('petugas.store_laporan');
+    Route::get('/petugas/laporan/{id}/edit', [DashboardController::class, 'editLaporan'])->name('petugas.edit_laporan');
+    Route::post('/petugas/laporan/{id}', [DashboardController::class, 'updateLaporan'])->name('petugas.update_laporan');
+    Route::delete('/petugas/laporan/{id}/foto', [DashboardController::class, 'deleteFotoLaporan'])->name('petugas.delete_foto_laporan');
+    Route::get('/petugas/laporan/{id}/preview', [DashboardController::class, 'previewLaporan'])->name('petugas.preview_laporan');
+    Route::post('/petugas/laporan/{id}/submit', [DashboardController::class, 'submitLaporan'])->name('petugas.submit_laporan');
+    Route::get('/petugas/draft', [DashboardController::class, 'draftLaporan'])->name('petugas.draft');
+    Route::delete('/petugas/laporan/{id}', [DashboardController::class, 'deleteLaporan'])->name('petugas.delete_laporan');
 });
