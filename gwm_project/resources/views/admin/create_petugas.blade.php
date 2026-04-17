@@ -400,46 +400,82 @@
             </div>
         @endif
 
-        <div class="chart-card" style="height: auto; max-width: 600px;">
-            <h3>Detail Akun Baru</h3>
-            <form action="{{ route('admin.store_petugas') }}" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
-                @csrf
-                <div>
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Kecamatan</label>
-                    <select name="name" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; background-color: white;">
-                        <option value="" disabled selected>Pilih Kecamatan</option>
-                        <option value="Wonosari">Wonosari</option>
-                        <option value="Playen">Playen</option>
-                        <option value="Patuk">Patuk</option>
-                        <option value="Gedangsari">Gedangsari</option>
-                        <option value="Nglipar">Nglipar</option>
-                        <option value="Ngawen">Ngawen</option>
-                        <option value="Semin">Semin</option>
-                        <option value="Ponjong">Ponjong</option>
-                        <option value="Karangmojo">Karangmojo</option>
-                        <option value="Paliyan">Paliyan</option>
-                        <option value="Saptosari">Saptosari</option>
-                        <option value="Tepus">Tepus</option>
-                        <option value="Tanjungsari">Tanjungsari</option>
-                        <option value="Rongkop">Rongkop</option>
-                        <option value="Girisubo">Girisubo</option>
-                        <option value="Panggang">Panggang</option>
-                        <option value="Purwosari">Purwosari</option>
-                        <option value="Semanu">Semanu</option>
-                    </select>
+        <div style="display: flex; flex-direction: column; gap: 24px; max-width: 800px;">
+            <div class="chart-card" style="height: auto; max-width: none;">
+                <h3>Detail Akun Baru</h3>
+                <form action="{{ route('admin.store_petugas') }}" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+                    @csrf
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Kecamatan</label>
+                        <select name="name" id="kecamatan_select" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; background-color: white;">
+                            <option value="" disabled selected>Pilih Kecamatan</option>
+                            <option value="Wonosari">Wonosari</option>
+                            <option value="Playen">Playen</option>
+                            <option value="Patuk">Patuk</option>
+                            <option value="Gedangsari">Gedangsari</option>
+                            <option value="Nglipar">Nglipar</option>
+                            <option value="Ngawen">Ngawen</option>
+                            <option value="Semin">Semin</option>
+                            <option value="Ponjong">Ponjong</option>
+                            <option value="Karangmojo">Karangmojo</option>
+                            <option value="Paliyan">Paliyan</option>
+                            <option value="Saptosari">Saptosari</option>
+                            <option value="Tepus">Tepus</option>
+                            <option value="Tanjungsari">Tanjungsari</option>
+                            <option value="Rongkop">Rongkop</option>
+                            <option value="Girisubo">Girisubo</option>
+                            <option value="Panggang">Panggang</option>
+                            <option value="Purwosari">Purwosari</option>
+                            <option value="Semanu">Semanu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Kelurahan (Bisa banyak, pisahkan dengan koma)</label>
+                        <input type="text" name="kelurahan" placeholder="Contoh: Mulo, Kepek, Baleharjo" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Username (Email)</label>
+                        <input type="text" name="email" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Password Login (Min. 8)</label>
+                        <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button type="submit" style="padding: 12px 24px; background-color: #0ea5e9; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Simpan Akun Petugas</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="chart-card" style="height: auto; max-width: none;">
+                <h3>Daftar Akun Petugas</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Kecamatan</th>
+                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Kelurahan</th>
+                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Username (Email)</th>
+                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Tgl Dibuat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($accounts as $acc)
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 12px 8px; font-weight: 500; color: var(--text-dark);">{{ $acc->name }}</td>
+                                    <td style="padding: 12px 8px; color: var(--text-gray);">{{ $acc->kelurahan }}</td>
+                                    <td style="padding: 12px 8px; color: var(--text-gray);">{{ $acc->email }}</td>
+                                    <td style="padding: 12px 8px; color: var(--text-gray);">{{ $acc->created_at->format('d M Y') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" style="padding: 24px 8px; text-align: center; color: #94a3b8;">Belum ada akun petugas yang dibuat.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-                <div>
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Username (Email)</label>
-                    <input type="text" name="email" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
-                </div>
-                <div>
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Password Login (Min. 8)</label>
-                    <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
-                </div>
-                <div style="margin-top: 10px;">
-                    <button type="submit" style="padding: 12px 24px; background-color: #0ea5e9; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Simpan Akun Petugas</button>
-                </div>
-            </form>
+            </div>
         </div>
     </main>
 

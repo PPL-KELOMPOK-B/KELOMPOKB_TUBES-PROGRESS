@@ -21,11 +21,5 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        User::create([
-            'name' => 'Petugas Kecamatan',
-            'email' => 'petugas', // For easier testing, changed to just 'petugas'
-            'password' => Hash::make('petugas123'),
-            'role' => 'petugas',
-        ]);
     }
 }
