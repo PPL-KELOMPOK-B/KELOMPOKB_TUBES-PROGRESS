@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,7 +99,7 @@
             font-size: 14px;
             font-weight: 600;
         }
-        
+
         .profile-info p {
             margin: 2px 0 0;
             font-size: 11px;
@@ -187,7 +188,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         .stat-info {
@@ -209,7 +210,7 @@
             margin: 0;
             line-height: 1;
         }
-        
+
         .stat-extra {
             font-size: 13px;
             color: var(--text-gray);
@@ -226,10 +227,25 @@
         }
 
         /* Icons Colors */
-        .icon-blue { background-color: #eff6ff; color: #3b82f6; }
-        .icon-red { background-color: #fef2f2; color: #ef4444; }
-        .icon-orange { background-color: #fff7ed; color: #f97316; }
-        .icon-green { background-color: #f0fdf4; color: #10b981; }
+        .icon-blue {
+            background-color: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .icon-red {
+            background-color: #fef2f2;
+            color: #ef4444;
+        }
+
+        .icon-orange {
+            background-color: #fff7ed;
+            color: #f97316;
+        }
+
+        .icon-green {
+            background-color: #f0fdf4;
+            color: #10b981;
+        }
 
         /* Charts Section */
         .charts-row {
@@ -243,7 +259,7 @@
             border-radius: var(--card-radius);
             padding: 24px;
             border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
             height: 400px;
             display: flex;
             flex-direction: column;
@@ -263,7 +279,7 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         /* Custom Legends for Pie Chart */
         .custom-legend {
             display: grid;
@@ -287,25 +303,20 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h2>GWM</h2>
-                <p>Gunungkidul Water Monitor</p>
-            </div>
+        <div class="brand" style="margin-bottom: 24px; padding: 0;">
+            <img src="{{ asset('images/logo-gwm.png') }}" alt="GWM Logo"
+                style="width: 100%; max-height: 80px; object-fit: contain;">
         </div>
 
         <div class="profile-card">
             <div class="profile-avatar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -314,56 +325,96 @@
             </div>
             <div class="profile-info">
                 <h4>Administrator</h4>
-                <p>Admin Gunungkidul</p>
+                <p>Admin</p>
             </div>
         </div>
 
         <ul class="nav-menu">
             <li class="nav-item">
                 <a href="{{ route('admin.dashboard') }}" class="nav-link active">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <rect x="3" y="3" width="7" height="9" rx="1" />
+                        <rect x="14" y="3" width="7" height="5" rx="1" />
+                        <rect x="14" y="12" width="7" height="9" rx="1" />
+                        <rect x="3" y="16" width="7" height="5" rx="1" />
+                    </svg>
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('admin.create_petugas') }}" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
                     Buat Akun Petugas
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
                     Validasi
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
                     Prioritas
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
                     Tindak Lanjut
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
                     Monitoring
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
                     Log Aktivitas
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
                     Export Data
                 </a>
             </li>
@@ -371,7 +422,12 @@
 
         <div class="nav-bottom">
             <a href="/logout" class="nav-link">
-                <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
                 Keluar
             </a>
         </div>
@@ -389,10 +445,11 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Total Laporan</span>
-                    <span class="stat-value">0</span>
+                    <span class="stat-value">{{ $total }}</span>
                 </div>
                 <div class="stat-icon icon-blue">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                         <circle cx="12" cy="10" r="3"></circle>
                     </svg>
@@ -402,11 +459,14 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Laporan Kritis</span>
-                    <span class="stat-value">0</span>
+                    <span class="stat-value">{{ $kritis }}</span>
                 </div>
                 <div class="stat-icon icon-red">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
                         <line x1="12" y1="9" x2="12" y2="13"></line>
                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
@@ -417,12 +477,13 @@
                 <div class="stat-info">
                     <span class="stat-label">Warga Terdampak</span>
                     <div>
-                        <span class="stat-value">0</span>
+                        <span class="stat-value">{{ number_format($warga_terdampak) }}</span>
                         <span class="stat-extra">jiwa</span>
                     </div>
                 </div>
                 <div class="stat-icon icon-orange">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -434,10 +495,11 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Tervalidasi</span>
-                    <span class="stat-value">0</span>
+                    <span class="stat-value">{{ $tervalidasi }}</span>
                 </div>
                 <div class="stat-icon icon-green">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                     </svg>
@@ -453,23 +515,23 @@
                 <div class="chart-container" style="max-height: 220px;">
                     <canvas id="pieChart"></canvas>
                 </div>
-                
+
                 <div class="custom-legend">
                     <div class="legend-item">
                         <div class="legend-color" style="background: #10b981;"></div>
-                        Rendah: 0
+                        Rendah: {{ $distribusi_kekeringan['Rendah'] }}
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background: #eab308;"></div>
-                        Sedang: 0
+                        Sedang: {{ $distribusi_kekeringan['Sedang'] }}
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background: #f97316;"></div>
-                        Tinggi: 0
+                        Tinggi: {{ $distribusi_kekeringan['Tinggi'] }}
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background: #ef4444;"></div>
-                        Kritis: 0
+                        Kritis: {{ $distribusi_kekeringan['Kritis'] }}
                     </div>
                 </div>
             </div>
@@ -492,7 +554,12 @@
             data: {
                 labels: ['Rendah', 'Sedang', 'Tinggi', 'Kritis'],
                 datasets: [{
-                    data: [0, 0, 0, 0],
+                    data: [
+                        {{ $distribusi_kekeringan['Rendah'] }},
+                        {{ $distribusi_kekeringan['Sedang'] }},
+                        {{ $distribusi_kekeringan['Tinggi'] }},
+                        {{ $distribusi_kekeringan['Kritis'] }}
+                    ],
                     backgroundColor: [
                         '#10b981', // Green
                         '#eab308', // Yellow
@@ -512,7 +579,7 @@
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return ' ' + context.label + ': ' + context.raw;
                             }
                         }
@@ -526,10 +593,10 @@
         new Chart(barCtx, {
             type: 'bar',
             data: {
-                labels: ['Desa Bleberan', 'Desa Nglipar', 'Desa Karangmojo', 'Desa Gedangsari', 'Desa Ponjong'],
+                labels: {!! json_encode(array_keys($distribusi_area)) !!},
                 datasets: [{
                     label: 'Warga Terdampak',
-                    data: [0, 0, 0, 0, 0],
+                    data: {!! json_encode(array_values($distribusi_area)) !!},
                     backgroundColor: '#0ea5e9',
                     borderRadius: 4,
                     barPercentage: 0.6
@@ -574,4 +641,5 @@
         });
     </script>
 </body>
+
 </html>

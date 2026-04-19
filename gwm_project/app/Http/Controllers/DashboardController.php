@@ -6,33 +6,68 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    private function getDashboardData()
+    private function getDashboardData($userId = null)
     {
-        // Data statistik dummy
-        return [
-            'total' => 5,
-            'menunggu' => 2,
-            'proses' => 2,
-            'selesai' => 1,
-            'laporan' => collect([
-                (object)['id_laporan' => 'R001', 'status' => 'proses', 'lokasi' => 'Bleberan, Playen', 'jumlah_warga' => 245, 'durasi' => 45, 'created_at' => now()],
-                (object)['id_laporan' => 'R002', 'status' => 'menunggu', 'lokasi' => 'Nglipar, Nglipar', 'jumlah_warga' => 120, 'durasi' => 30, 'created_at' => now()],
-                (object)['id_laporan' => 'R003', 'status' => 'selesai', 'lokasi' => 'Karangmojo, Karangmojo', 'jumlah_warga' => 80, 'durasi' => 15, 'created_at' => now()],
-                (object)['id_laporan' => 'R004', 'status' => 'proses', 'lokasi' => 'Gedangsari, Gedangsari', 'jumlah_warga' => 180, 'durasi' => 38, 'created_at' => now()],
-            ])
+        $query = \App\Models\Laporan::where('status', '!=', 'draft');
+        
+        if ($userId) {
+            $query->where('user_id', $userId);
+        }
+
+        $allReports = $query->get();
+
+        // Calculate stats
+        $stats = [
+            'total' => $allReports->count(),
+            'kritis' => $allReports->where('kondisi_air', 'Kritis')->count(),
+            'warga_terdampak' => $allReports->sum('warga_terdampak'),
+            'tervalidasi' => $allReports->whereIn('status', ['selesai', 'proses'])->count(), 
+            'menunggu' => $allReports->where('status', 'menunggu_validasi')->count(),
+            'proses' => $allReports->where('status', 'proses')->count(),
+            'selesai' => $allReports->where('status', 'selesai')->count(),
         ];
+
+        // Drought distribution mapping
+        $distKekeringan = [
+            'Rendah' => 0,
+            'Sedang' => 0,
+            'Tinggi' => 0,
+            'Kritis' => 0,
+        ];
+
+        foreach ($allReports as $lap) {
+            if ($lap->kondisi_air == 'Ketersediaan air mulai berkurang') $distKekeringan['Sedang']++;
+            elseif ($lap->kondisi_air == 'Ketersediaan air tidak mencukupi') $distKekeringan['Tinggi']++;
+            elseif ($lap->kondisi_air == 'Air tidak tersedia') $distKekeringan['Kritis']++;
+            else $distKekeringan['Rendah']++;
+        }
+
+        $stats['distribusi_kekeringan'] = $distKekeringan;
+        $stats['kritis'] = $distKekeringan['Kritis'];
+
+        // Area distribution (for bar chart)
+        $stats['distribusi_area'] = $allReports->groupBy('kelurahan')
+            ->map(fn($laps) => $laps->sum('warga_terdampak'))
+            ->toArray();
+
+        // Latest reports
+        $stats['laporan'] = $allReports->sortByDesc('created_at')->take(5);
+
+        return $stats;
     }
 
     public function adminIndex()
     {
         if (auth()->user()->role !== 'admin') abort(403);
-        return view('admin.dashboard', $this->getDashboardData());
+        $data = $this->getDashboardData();
+        return view('admin.dashboard', $data);
     }
 
     public function petugasIndex()
     {
         if (auth()->user()->role !== 'petugas') abort(403);
-        return view('petugas.dashboard', $this->getDashboardData());
+        $data = $this->getDashboardData(auth()->id());
+        return view('petugas.dashboard', $data);
     }
 
     public function createLaporan()

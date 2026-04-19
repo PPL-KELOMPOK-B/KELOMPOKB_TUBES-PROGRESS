@@ -391,16 +391,8 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h2>GWM</h2>
-                <p>Gunungkidul Water Monitor</p>
-            </div>
+        <div class="brand" style="margin-bottom: 24px; padding: 0;">
+            <img src="{{ asset('images/logo-gwm.png') }}" alt="GWM Logo" style="width: 100%; max-height: 80px; object-fit: contain;">
         </div>
 
         <div class="profile-container">

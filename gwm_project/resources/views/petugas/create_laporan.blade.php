@@ -427,16 +427,8 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h2>GWM</h2>
-                <p>Gunungkidul Water Monitor</p>
-            </div>
+        <div class="brand" style="margin-bottom: 24px; padding: 0;">
+            <img src="{{ asset('images/logo-gwm.png') }}" alt="GWM Logo" style="width: 100%; max-height: 80px; object-fit: contain;">
         </div>
 
         <div class="profile-container">
@@ -472,7 +464,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="active">
+                <a href="#">
                     <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                     Laporan
                 </a>
