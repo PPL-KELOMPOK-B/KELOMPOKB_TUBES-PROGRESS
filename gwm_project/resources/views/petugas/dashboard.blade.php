@@ -421,22 +421,92 @@
             font-size: 14px;
             font-weight: 500;
         }
+
+        /* Report List Styles */
+        .report-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .report-card:hover {
+            border-color: #63a4d9;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .report-main {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .badge-id {
+            background: #f1f5f9;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .badge-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Status Colors Mapping */
+        .status-menunggu { background: #e0f2fe; color: #0ea5e9; }
+        .status-proses { background: #fef3c7; color: #d97706; }
+        .status-selesai { background: #dcfce7; color: #15803d; }
+
+        .report-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .report-meta {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .report-date {
+            font-size: 14px;
+            color: #94a3b8;
+            font-weight: 500;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h2>GWM</h2>
-                <p>Gunungkidul Water Monitor</p>
-            </div>
+        <div class="brand" style="margin-bottom: 24px; padding: 0;">
+            <img src="{{ asset('images/logo-gwm.png') }}" alt="GWM Logo" style="width: 100%; max-height: 80px; object-fit: contain;">
         </div>
 
         <div class="profile-container">
@@ -521,7 +591,7 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Total Laporan</span>
-                    <span class="stat-val">0</span>
+                    <span class="stat-val">{{ $total }}</span>
                 </div>
                 <div class="stat-icon icon-blue">
                     <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -531,7 +601,7 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Menunggu Validasi</span>
-                    <span class="stat-val">0</span>
+                    <span class="stat-val">{{ $menunggu }}</span>
                 </div>
                 <div class="stat-icon icon-yellow">
                     <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -541,7 +611,7 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Sedang Diproses</span>
-                    <span class="stat-val">0</span>
+                    <span class="stat-val">{{ $proses }}</span>
                 </div>
                 <div class="stat-icon icon-teal">
                     <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -551,7 +621,7 @@
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Selesai</span>
-                    <span class="stat-val">0</span>
+                    <span class="stat-val">{{ $selesai }}</span>
                 </div>
                 <div class="stat-icon icon-green">
                     <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -578,7 +648,7 @@
                         <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         Buat Laporan Baru
                     </a>
-                    <a href="#" class="action-btn btn-outline">
+                    <a href="{{ route('petugas.draft') }}" class="action-btn btn-outline">
                         <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         Lihat Draft Laporan
                     </a>
@@ -598,10 +668,38 @@
                 <a href="#" class="link-all">Lihat Semua</a>
             </div>
             
-            <div class="empty-state">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                <p>Belum ada data laporan tersedia saat ini.</p>
-            </div>
+            @if($laporan->isEmpty())
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    <p>Belum ada data laporan tersedia saat ini.</p>
+                </div>
+            @else
+                <div class="report-list">
+                    @foreach($laporan as $lap)
+                        <div class="report-card">
+                            <div class="report-main">
+                                <div class="report-top">
+                                    <span class="badge-id">R{{ str_pad($lap->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="badge-status 
+                                        @if($lap->status == 'menunggu_validasi') status-menunggu
+                                        @elseif($lap->status == 'proses') status-proses
+                                        @elseif($lap->status == 'selesai') status-selesai
+                                        @else status-menunggu @endif">
+                                        {{ str_replace('_', ' ', ucfirst($lap->status == 'menunggu_validasi' ? 'Menunggu Validasi' : $lap->status)) }}
+                                    </span>
+                                </div>
+                                <h4 class="report-title">Kelurahan {{ $lap->kelurahan }}</h4>
+                                <p class="report-meta">
+                                    {{ $lap->warga_terdampak }} warga terdampak - {{ $lap->durasi_kekeringan }} hari kekeringan
+                                </p>
+                            </div>
+                            <div class="report-date">
+                                {{ $lap->created_at->format('d M Y') }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </main>
 
@@ -620,8 +718,8 @@
                 labels: ['Validasi', 'Proses', 'Selesai'],
                 datasets: [{
                     label: 'Status Laporan',
-                    // Gunakan data dummy kosong 0 karena belum ada
-                    data: [0, 0, 0],
+                    // Data Validasi bertambah setelah disetujui (proses + selesai)
+                    data: [{{ $proses + $selesai }}, {{ $proses }}, {{ $selesai }}],
                     backgroundColor: gradient,
                     borderRadius: 6,
                     barPercentage: 0.6
@@ -634,7 +732,7 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 1, // Skala kecil karena datanya nol
+                        suggestedMax: 5, 
                         ticks: { stepSize: 1, color: '#94a3b8' },
                         grid: { color: '#f1f5f9' }
                     },
