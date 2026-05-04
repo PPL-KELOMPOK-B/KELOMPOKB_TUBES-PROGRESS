@@ -292,13 +292,19 @@ class DashboardController extends Controller
             'kecamatan' => 'required|string',
             'kelurahan' => 'required|string',
             'kondisi_air' => 'required|string',
+<<<<<<< HEAD
             'warga_terdampak' => 'required|integer|min:1',
             'durasi_kekeringan' => 'required|integer|min:1',
+=======
+            'warga_terdampak' => 'required|integer',
+            'durasi_kekeringan' => 'required|integer',
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
             'foto_upload' => 'nullable|array|max:3',
             'foto_upload.*' => 'image|max:10240',
             'keterangan' => 'required|string',
         ];
 
+<<<<<<< HEAD
         if ($request->action === 'draft') {
             if (empty($request->kelurahan) && empty($request->kondisi_air) && 
                 empty($request->warga_terdampak) && empty($request->durasi_kekeringan) && 
@@ -318,6 +324,8 @@ class DashboardController extends Controller
             ];
         }
 
+=======
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
         $messages = [
             'kelurahan.required' => 'Kelurahan wajib dipilih.',
             'kondisi_air.required' => 'Kondisi air wajib dipilih.',
@@ -394,13 +402,19 @@ class DashboardController extends Controller
             'kecamatan' => 'required|string',
             'kelurahan' => 'required|string',
             'kondisi_air' => 'required|string',
+<<<<<<< HEAD
             'warga_terdampak' => 'required|integer|min:1',
             'durasi_kekeringan' => 'required|integer|min:1',
+=======
+            'warga_terdampak' => 'required|integer',
+            'durasi_kekeringan' => 'required|integer',
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
             'foto_upload' => 'nullable|array|max:3',
             'foto_upload.*' => 'image|max:10240',
             'keterangan' => 'required|string',
         ];
 
+<<<<<<< HEAD
         if ($request->action === 'draft') {
             $existingFotosCount = $laporan->foto ? count(json_decode($laporan->foto, true) ?? [$laporan->foto]) : 0;
             $removedCount = $request->filled('removed_fotos') ? count(json_decode($request->removed_fotos, true) ?? []) : 0;
@@ -424,6 +438,8 @@ class DashboardController extends Controller
             ];
         }
 
+=======
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
         $messages = [
             'kelurahan.required' => 'Kelurahan wajib dipilih.',
             'kondisi_air.required' => 'Kondisi air wajib dipilih.',
@@ -574,6 +590,7 @@ class DashboardController extends Controller
         return redirect()->route('admin.create_petugas')->with('success', 'Akun petugas berhasil dibuat!');
     }
 
+<<<<<<< HEAD
     public function deletePetugas($id)
     {
         if (auth()->user()->role !== 'admin') abort(403);
@@ -582,6 +599,8 @@ class DashboardController extends Controller
         return redirect()->back()->with('success_delete', 'Akun petugas berhasil dihapus!');
     }
 
+=======
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
     public function adminValidasi(Request $request)
     {
         if (auth()->user()->role !== 'admin') abort(403);
@@ -596,8 +615,12 @@ class DashboardController extends Controller
             $query->where('kecamatan', 'like', '%' . $request->kecamatan . '%');
         }
 
+<<<<<<< HEAD
         $perPage = $request->input('per_page', 10);
         $laporans = $query->orderBy('created_at', 'desc')->paginate($perPage);
+=======
+        $laporans = $query->orderBy('created_at', 'desc')->get();
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
 
         return view('admin.validasi', compact('laporans'));
     }
@@ -624,6 +647,7 @@ class DashboardController extends Controller
 
         return redirect()->route('admin.validasi.index')->with('success', 'Status validasi laporan berhasil diperbarui.');
     }
+<<<<<<< HEAD
 
     public function deleteLaporanAdmin($id)
     {
@@ -644,4 +668,6 @@ class DashboardController extends Controller
         $laporan->delete();
         return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
     }
+=======
+>>>>>>> a448c112c7186dd5a465147ca982f9deafecc1df
 }
