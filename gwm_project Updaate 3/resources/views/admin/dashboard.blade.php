@@ -11,8 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -303,33 +301,6 @@
             height: 10px;
             border-radius: 50%;
         }
-
-        /* Password Toggle Styles */
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            cursor: pointer;
-            color: #94a3b8;
-            background: none;
-            border: none;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: color 0.2s;
-        }
-
-        .toggle-password:hover {
-            color: #0ea5e9;
-        }
     </style>
 </head>
 
@@ -360,7 +331,7 @@
 
         <ul class="nav-menu">
             <li class="nav-item">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}" class="nav-link active">
                     <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor">
                         <rect x="3" y="3" width="7" height="9" rx="1" />
@@ -372,7 +343,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.create_petugas') }}" class="nav-link active">
+                <a href="{{ route('admin.create_petugas') }}" class="nav-link">
                     <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -465,197 +436,209 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="page-header">
-            <h1>Buat Akun Petugas</h1>
-            <p>Tambahkan akun login baru untuk petugas lapangan</p>
+            <h1>Dashboard Administrator</h1>
+            <p>Monitor kondisi kekeringan di seluruh wilayah Gunungkidul</p>
         </div>
 
-        @if(session('success'))
-            <div
-                style="background: #10b981; color: white; padding: 12px 20px; border-radius: var(--card-radius); margin-bottom: 24px; font-weight: 500;">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div
-                style="background: #ef4444; color: white; padding: 12px 20px; border-radius: var(--card-radius); margin-bottom: 24px; font-weight: 500;">
-                <ul style="margin: 0; padding-left: 20px;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <div style="display: flex; flex-direction: column; gap: 24px; max-width: 800px;">
-            <div class="chart-card" style="height: auto; max-width: none;">
-                <h3>Detail Akun Baru</h3>
-                <form action="{{ route('admin.store_petugas') }}" method="POST"
-                    style="display: flex; flex-direction: column; gap: 16px;">
-                    @csrf
-                    <div>
-                        <label
-                            style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Kecamatan</label>
-                        <select name="name" id="kecamatan_select" required
-                            style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; background-color: white;">
-                            <option value="" disabled selected>Pilih Kecamatan</option>
-                            <option value="Wonosari">Wonosari</option>
-                            <option value="Playen">Playen</option>
-                            <option value="Patuk">Patuk</option>
-                            <option value="Gedangsari">Gedangsari</option>
-                            <option value="Nglipar">Nglipar</option>
-                            <option value="Ngawen">Ngawen</option>
-                            <option value="Semin">Semin</option>
-                            <option value="Ponjong">Ponjong</option>
-                            <option value="Karangmojo">Karangmojo</option>
-                            <option value="Paliyan">Paliyan</option>
-                            <option value="Saptosari">Saptosari</option>
-                            <option value="Tepus">Tepus</option>
-                            <option value="Tanjungsari">Tanjungsari</option>
-                            <option value="Rongkop">Rongkop</option>
-                            <option value="Girisubo">Girisubo</option>
-                            <option value="Panggang">Panggang</option>
-                            <option value="Purwosari">Purwosari</option>
-                            <option value="Semanu">Semanu</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label
-                            style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Kelurahan
-                            (Bisa banyak, pisahkan dengan koma)</label>
-                        <input type="text" name="kelurahan" placeholder="Contoh: Mulo, Kepek, Baleharjo" required
-                            style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
-                    </div>
-                    <div>
-                        <label
-                            style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Username
-                            (Email)</label>
-                        <input type="text" name="email" placeholder="Contoh: kecamatan@gwm.com" required
-                            style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
-                    </div>
-                    <div>
-                        <label
-                            style="font-size: 13px; font-weight: 600; color: var(--text-gray); margin-bottom: 8px; display: block;">Password
-                            Login (Min. 8)</label>
-                        <div class="input-wrapper">
-                            <input type="password" id="password" name="password" placeholder="Contoh: kecamatan123" required
-                                style="width: 100%; padding: 10px; padding-right: 40px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;">
-                            <button type="button" id="togglePassword" class="toggle-password">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <button type="submit"
-                            style="padding: 12px 24px; background-color: #0ea5e9; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Buat
-                            Akun Petugas</button>
-                    </div>
-                </form>
+        <!-- Four Stat Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Total Laporan</span>
+                    <span class="stat-value">{{ $total }}</span>
+                </div>
+                <div class="stat-icon icon-blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </div>
             </div>
 
-            <div class="chart-card" style="height: auto; max-width: none;">
-                <h3>Daftar Akun Petugas</h3>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid var(--border);">
-                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Kecamatan</th>
-                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Username
-                                    (Email)</th>
-                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600;">Tgl Dibuat
-                                </th>
-                                <th style="padding: 12px 8px; color: var(--text-gray); font-weight: 600; text-align: right;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($accounts as $acc)
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 12px 8px; font-weight: 500; color: var(--text-dark);">
-                                        {{ $acc->name }}</td>
-                                    <td style="padding: 12px 8px; color: var(--text-gray);">{{ $acc->email }}</td>
-                                    <td style="padding: 12px 8px; color: var(--text-gray);">
-                                        {{ $acc->created_at->format('d M Y') }}</td>
-                                    <td style="padding: 12px 8px; text-align: right;">
-                                        <form action="{{ route('admin.delete_petugas', $acc->id) }}" method="POST" class="delete-form" style="margin: 0; display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn-delete" title="Hapus Akun" style="background: #fffafa; border: 1px solid #fee2e2; border-radius: 6px; padding: 6px; color: #ef4444; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fffafa'">
-                                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" style="padding: 24px 8px; text-align: center; color: #94a3b8;">Belum ada
-                                        akun petugas yang dibuat.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Laporan Kritis</span>
+                    <span class="stat-value">{{ $kritis }}</span>
+                </div>
+                <div class="stat-icon icon-red">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Warga Terdampak</span>
+                    <div>
+                        <span class="stat-value">{{ number_format($warga_terdampak) }}</span>
+                        <span class="stat-extra">jiwa</span>
+                    </div>
+                </div>
+                <div class="stat-icon icon-orange">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Tervalidasi</span>
+                    <span class="stat-value">{{ $tervalidasi }}</span>
+                </div>
+                <div class="stat-icon icon-green">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-row">
+            <!-- Pie Chart Container -->
+            <div class="chart-card">
+                <h3>Distribusi Tingkat Kekeringan</h3>
+                <div class="chart-container" style="max-height: 220px;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+
+                <div class="custom-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #10b981;"></div>
+                        Rendah: {{ $distribusi_kekeringan['Rendah'] }}
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #eab308;"></div>
+                        Sedang: {{ $distribusi_kekeringan['Sedang'] }}
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f97316;"></div>
+                        Tinggi: {{ $distribusi_kekeringan['Tinggi'] }}
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ef4444;"></div>
+                        Kritis: {{ $distribusi_kekeringan['Kritis'] }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Chart Container -->
+            <div class="chart-card">
+                <h3>Warga Terdampak per Area</h3>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-
-        // Toggle Password Visibility
-        const togglePassword = document.querySelector('#togglePassword');
-        const passwordField = document.querySelector('#password');
-
-        togglePassword.addEventListener('click', function () {
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-
-            this.innerHTML = type === 'password' ?
-                `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>` :
-                `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>`;
-        });
-
-        // SweetAlert for Delete Confirmation
-        const deleteButtons = document.querySelectorAll('.btn-delete');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const form = this.closest('.delete-form');
-                Swal.fire({
-                    title: 'Hapus Akun Petugas?',
-                    text: "Tindakan ini tidak dapat dibatalkan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#64748b',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
+        // Pie Chart Initialization
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Rendah', 'Sedang', 'Tinggi', 'Kritis'],
+                datasets: [{
+                    data: [
+                        {{ $distribusi_kekeringan['Rendah'] }},
+                        {{ $distribusi_kekeringan['Sedang'] }},
+                        {{ $distribusi_kekeringan['Tinggi'] }},
+                        {{ $distribusi_kekeringan['Kritis'] }}
+                    ],
+                    backgroundColor: [
+                        '#10b981', // Green
+                        '#eab308', // Yellow
+                        '#f97316', // Orange
+                        '#ef4444'  // Red
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // We use custom HTML legend below it
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return ' ' + context.label + ': ' + context.raw;
+                            }
+                        }
                     }
-                });
-            });
+                }
+            }
         });
 
-        // SweetAlert for Success Messages
-        @if(session('success_delete'))
-            Swal.fire({
-                title: 'Berhasil!',
-                text: "{{ session('success_delete') }}",
-                icon: 'success',
-                confirmButtonColor: '#0ea5e9'
-            });
-        @endif
+        // Bar Chart Initialization
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode(array_keys($distribusi_area)) !!},
+                datasets: [{
+                    label: 'Warga Terdampak',
+                    data: {!! json_encode(array_values($distribusi_area)) !!},
+                    backgroundColor: '#0ea5e9',
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 320,
+                        ticks: {
+                            stepSize: 80,
+                            color: '#94a3b8',
+                            font: { size: 11 }
+                        },
+                        grid: {
+                            color: '#f1f5f9',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 10 },
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 
