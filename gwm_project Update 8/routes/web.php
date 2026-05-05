@@ -51,11 +51,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('admin.dashboard');
     Route::get('/admin/petugas/create', [DashboardController::class, 'createPetugas'])->name('admin.create_petugas');
     Route::post('/admin/petugas/create', [DashboardController::class, 'storePetugas'])->name('admin.store_petugas');
-    
+    Route::delete('/admin/petugas/{id}', [DashboardController::class, 'deletePetugas'])->name('admin.delete_petugas');
+
     // Admin Validasi Routes
     Route::get('/admin/validasi', [DashboardController::class, 'adminValidasi'])->name('admin.validasi.index');
     Route::get('/admin/validasi/{id}', [DashboardController::class, 'adminValidasiDetail'])->name('admin.validasi.detail');
     Route::post('/admin/validasi/{id}/action', [DashboardController::class, 'adminValidasiAction'])->name('admin.validasi.action');
+    Route::delete('/admin/validasi/{id}', [DashboardController::class, 'deleteLaporanAdmin'])->name('admin.validasi.destroy');
     
     // Petugas Routes
     Route::get('/petugas/dashboard', [DashboardController::class, 'petugasIndex'])->name('petugas.dashboard');
@@ -69,4 +71,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/petugas/laporan/{id}/submit', [DashboardController::class, 'submitLaporan'])->name('petugas.submit_laporan');
     Route::get('/petugas/draft', [DashboardController::class, 'draftLaporan'])->name('petugas.draft');
     Route::delete('/petugas/laporan/{id}', [DashboardController::class, 'deleteLaporan'])->name('petugas.delete_laporan');
+
+    // Laporan Detail & Edit dari Daftar Laporan
+    Route::get('/petugas/laporan/{id}/detail', [DashboardController::class, 'showLaporan'])->name('petugas.show_laporan');
+    Route::get('/petugas/laporan/{id}/edit-list', [DashboardController::class, 'editLaporanList'])->name('petugas.edit_laporan_list');
+    Route::put('/petugas/laporan/{id}/update-list', [DashboardController::class, 'updateLaporanFromList'])->name('petugas.update_laporan_list');
 });

@@ -16,4 +16,12 @@ class Laporan extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Laporan hanya bisa diedit selama statusnya masih 'menunggu_validasi'.
+     */
+    public function isEditable(): bool
+    {
+        return $this->status === 'menunggu_validasi';
+    }
 }
