@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --bg-body: #f4f8fb;
@@ -459,12 +460,6 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        @if(session('success'))
-            <div style="background: #10b981; color: white; padding: 12px 20px; border-radius: var(--radius-md); margin-bottom: 24px; font-weight: 500; font-size: 14px;">
-                {{ session('success') }}
-            </div>
-        @endif
-
         <div class="top-header">
             <div class="page-title">
                 <h1>Draft Laporan</h1>
@@ -509,7 +504,7 @@
                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 Lanjutkan Edit
                             </a>
-                            <form action="{{ route('petugas.delete_laporan', $draft->id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus draft ini?');">
+                            <form action="{{ route('petugas.delete_laporan', $draft->id) }}" method="POST" class="delete-form" style="margin: 0;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-delete" title="Hapus Draft">
@@ -528,5 +523,39 @@
             </div>
         @endif
     </main>
+
+    <script>
+        @if(session('success'))
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonColor: '#3b82f6',
+                timer: 2500,
+                timerProgressBar: true
+            });
+        @endif
+
+        const deleteForms = document.querySelectorAll('.delete-form');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Konfirmasi Hapus',
+                    text: 'Apakah Anda yakin ingin menghapus draft ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#94a3b8',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

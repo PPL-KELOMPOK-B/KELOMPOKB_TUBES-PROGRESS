@@ -414,6 +414,89 @@
             color: #94a3b8;
         }
 
+        /* Action Buttons */
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-detail {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-detail:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: var(--primary);
+        }
+
+        .btn-edit-laporan {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(99, 164, 217, 0.3);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-edit-laporan:hover {
+            box-shadow: 0 5px 14px rgba(99, 164, 217, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-locked {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            cursor: not-allowed;
+            font-family: inherit;
+        }
+
+        /* Flash Messages */
+        .flash-success {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 18px; background: #dcfce7; border: 1px solid #bbf7d0;
+            border-radius: 12px; margin-bottom: 24px;
+            font-size: 14px; font-weight: 500; color: #15803d;
+        }
+
+        .flash-error {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 18px; background: #fee2e2; border: 1px solid #fecaca;
+            border-radius: 12px; margin-bottom: 24px;
+            font-size: 14px; font-weight: 500; color: #b91c1c;
+        }
+
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -467,7 +550,7 @@
                 </svg>
                 <div class="profile-location">
                     <span>Wilayah Aktif</span>
-                    <strong>Kec. {{ explode(' ', auth()->user()->name)[1] ?? 'Purwosari' }}</strong>
+                    <strong>Kecamatan Petugas {{ explode(' ', auth()->user()->name)[1] ?? 'Purwosari' }}</strong>
                 </div>
             </div>
         </div>
@@ -537,6 +620,8 @@
                 <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
                 <select name="status" onchange="this.form.submit()">
                     <option value="Semua Status" {{ request('status') == 'Semua Status' ? 'selected' : '' }}>Semua Status</option>
+                    <option value="Tervalidasi" {{ request('status') == 'Tervalidasi' ? 'selected' : '' }}>Tervalidasi</option>
+                    <option value="Tidak tervalidasi" {{ request('status') == 'Tidak tervalidasi' ? 'selected' : '' }}>Tidak Tervalidasi</option>
                     <option value="Menunggu Validasi" {{ request('status') == 'Menunggu Validasi' ? 'selected' : '' }}>Menunggu Validasi</option>
                     <option value="Proses" {{ request('status') == 'Proses' ? 'selected' : '' }}>Sedang Diproses</option>
                     <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
@@ -544,6 +629,19 @@
                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto; pointer-events: none;"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
         </form>
+
+        @if(session('success'))
+            <div class="flash-success">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="flash-error">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {{ session('error') }}
+            </div>
+        @endif
 
         @if($laporans->isEmpty())
             <div class="empty-state">
@@ -629,6 +727,25 @@
                                 <span>Proses</span>
                                 <span>{{ $lap->status == 'ditolak' ? 'Ditolak' : 'Selesai' }}</span>
                             </div>
+                        </div>
+
+                        {{-- Action Buttons --}}
+                        <div class="report-actions">
+                            <a href="{{ route('petugas.show_laporan', $lap->id) }}" class="btn-detail">
+                                <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Lihat Detail
+                            </a>
+                            @if($lap->isEditable())
+                                <a href="{{ route('petugas.edit_laporan_list', $lap->id) }}" class="btn-edit-laporan">
+                                    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    Edit Laporan
+                                </a>
+                            @else
+                                <span class="btn-locked" title="Laporan tidak dapat diedit setelah divalidasi">
+                                    <svg width="15" height="15" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    Terkunci
+                                </span>
+                            @endif
                         </div>
                     </div>
                 @endforeach
