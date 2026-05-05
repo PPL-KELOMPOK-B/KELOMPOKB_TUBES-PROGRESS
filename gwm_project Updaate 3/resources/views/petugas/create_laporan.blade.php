@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --bg-body: #f4f8fb;
@@ -560,14 +559,14 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div>
                             <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-dark); margin-bottom: 8px;">Jumlah Warga Terdampak</label>
-                            <input type="number" name="warga_terdampak" placeholder="1" required min="1" oninvalid="this.setCustomValidity('Jumlah warga harus lebih dari 0')" oninput="this.setCustomValidity('')" value="{{ old('warga_terdampak', $laporan->warga_terdampak ?? '') }}" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid {{ $errors->has('warga_terdampak') ? '#ef4444' : '#cbd5e1' }}; background-color: white; color: var(--text-dark); font-family: inherit; font-size: 14px; outline: none;">
+                            <input type="number" name="warga_terdampak" placeholder="0" required value="{{ old('warga_terdampak', $laporan->warga_terdampak ?? '') }}" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid {{ $errors->has('warga_terdampak') ? '#ef4444' : '#cbd5e1' }}; background-color: white; color: var(--text-dark); font-family: inherit; font-size: 14px; outline: none;">
                             @error('warga_terdampak')
                                 <span style="font-size: 12px; color: #ef4444; display: block; margin-top: 6px;">{{ $message }}</span>
                             @enderror
                         </div>
                         <div>
                             <label style="display: block; font-size: 13px; font-weight: 500; color: var(--text-dark); margin-bottom: 8px;">Durasi Kekeringan (hari)</label>
-                            <input type="number" name="durasi_kekeringan" placeholder="1" required min="1" oninvalid="this.setCustomValidity('Durasi kekeringan harus lebih dari 0')" oninput="this.setCustomValidity('')" value="{{ old('durasi_kekeringan', $laporan->durasi_kekeringan ?? '') }}" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid {{ $errors->has('durasi_kekeringan') ? '#ef4444' : '#cbd5e1' }}; background-color: white; color: var(--text-dark); font-family: inherit; font-size: 14px; outline: none;">
+                            <input type="number" name="durasi_kekeringan" placeholder="0" required value="{{ old('durasi_kekeringan', $laporan->durasi_kekeringan ?? '') }}" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid {{ $errors->has('durasi_kekeringan') ? '#ef4444' : '#cbd5e1' }}; background-color: white; color: var(--text-dark); font-family: inherit; font-size: 14px; outline: none;">
                             @error('durasi_kekeringan')
                                 <span style="font-size: 12px; color: #ef4444; display: block; margin-top: 6px;">{{ $message }}</span>
                             @enderror
@@ -660,12 +659,7 @@
                         let availableSlots = maxFiles - totalCurrent;
 
                         if (files.length > availableSlots) {
-                            Swal.fire({
-                                title: 'Batas Maksimal!',
-                                text: 'Maksimal hanya 3 foto yang diperbolehkan.',
-                                icon: 'error',
-                                confirmButtonColor: '#3b82f6'
-                            });
+                            limitWarning.style.display = 'inline-block';
                         }
 
                         const filesToAdd = files.slice(0, availableSlots);
@@ -675,12 +669,7 @@
                                 uploadedFiles.push(file);
                                 renderNewPreview(file, uploadedFiles.length - 1);
                             } else {
-                                Swal.fire({
-                                    title: 'File Terlalu Besar!',
-                                    text: "File " + file.name + " terlalu besar. Maksimal 10MB.",
-                                    icon: 'error',
-                                    confirmButtonColor: '#3b82f6'
-                                });
+                                alert("File " + file.name + " terlalu besar. Maksimal 10MB.");
                             }
                         });
 
@@ -799,7 +788,7 @@
 
             <!-- Footer Buttons -->
             <div style="display: flex; justify-content: flex-end; gap: 16px; margin-bottom: 40px;">
-                <button type="submit" name="action" value="draft" id="btn-simpan-draft" formnovalidate style="display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; font-family: inherit; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <button type="submit" name="action" value="draft" style="display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; font-family: inherit; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
                     <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                     Simpan Draft
                 </button>
@@ -807,78 +796,11 @@
                     <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     Preview
                 </button>
-                <button type="submit" name="action" value="submit" id="btn-submit-laporan" style="display: flex; align-items: center; justify-content: center; padding: 12px 24px; background: #3b82f6; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; color: white; cursor: pointer; font-family: inherit; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                <button type="submit" name="action" value="submit" style="display: flex; align-items: center; justify-content: center; padding: 12px 24px; background: #3b82f6; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; color: white; cursor: pointer; font-family: inherit; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: all 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
                     Kirim Laporan
                 </button>
             </div>
         </form>
     </main>
-
-    <script>
-        document.getElementById('btn-simpan-draft').addEventListener('click', function(e) {
-            e.preventDefault();
-            const form = this.closest('form');
-            const formData = new FormData(form);
-            let hasData = false;
-            
-            if (formData.get('kelurahan')) hasData = true;
-            if (formData.get('kondisi_air')) hasData = true;
-            if (formData.get('warga_terdampak')) hasData = true;
-            if (formData.get('durasi_kekeringan')) hasData = true;
-            if (formData.get('keterangan')) hasData = true;
-            if (typeof uploadedFiles !== 'undefined' && uploadedFiles.length > 0) hasData = true;
-            if (typeof existingFotos !== 'undefined' && existingFotos.length > 0) hasData = true;
-
-            if (!hasData) {
-                Swal.fire({
-                    title: 'Draft Kosong!',
-                    text: 'Minimal satu field harus diisi untuk menyimpan draft.',
-                    icon: 'error',
-                    confirmButtonColor: '#ef4444'
-                });
-            } else {
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: 'Draft laporan berhasil disimpan.',
-                    icon: 'success',
-                    confirmButtonColor: '#3b82f6',
-                    timer: 2500,
-                    timerProgressBar: true
-                }).then(() => {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'action';
-                    hiddenInput.value = 'draft';
-                    form.noValidate = true;
-                    form.appendChild(hiddenInput);
-                    form.submit();
-                });
-            }
-        });
-
-        document.getElementById('btn-submit-laporan').addEventListener('click', function(e) {
-            const form = this.closest('form');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-            } else {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: 'Laporan berhasil dikirim dan menunggu proses validasi.',
-                    icon: 'success',
-                    confirmButtonColor: '#3b82f6',
-                    timer: 2500,
-                    timerProgressBar: true
-                }).then(() => {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'action';
-                    hiddenInput.value = 'submit';
-                    form.appendChild(hiddenInput);
-                    form.submit();
-                });
-            }
-        });
-    </script>
 </body>
 </html>

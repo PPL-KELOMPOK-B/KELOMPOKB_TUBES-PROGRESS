@@ -419,7 +419,7 @@
                                 </path>
                                 <polyline points="22,6 12,13 2,6"></polyline>
                             </svg>
-                            <input type="text" id="email" name="email" placeholder="kecamatan@gwm.com"
+                            <input type="text" id="email" name="email" placeholder="petugas(kecamatan)@gmail.com"
                                 required>
                         </div>
                     </div>
@@ -428,6 +428,7 @@
                     <div class="form-group">
                         <div class="label-row">
                             <label for="password">PASSWORD</label>
+                            <a href="#" class="forgot-pwd">Lupa Password?</a>
                         </div>
                         <div class="input-wrapper">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -470,7 +471,6 @@
         // Tab switching logic for visual purposes
         const tabs = document.querySelectorAll('.tab');
         const loginTypeInput = document.getElementById('login_type');
-        const emailInput = document.getElementById('email');
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -478,15 +478,7 @@
                 tab.classList.add('active');
 
                 // Set explicit hidden role
-                const role = tab.getAttribute('data-role');
-                loginTypeInput.value = role;
-
-                // Update email placeholder
-                if (role === 'admin') {
-                    emailInput.placeholder = 'admin@gwm.com';
-                } else {
-                    emailInput.placeholder = 'kecamatan@gwm.com';
-                }
+                loginTypeInput.value = tab.getAttribute('data-role');
             });
         });
 
