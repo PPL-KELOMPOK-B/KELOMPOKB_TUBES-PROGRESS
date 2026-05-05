@@ -16,18 +16,19 @@ class DashboardController extends Controller
 
         $allReports = $query->get();
 
-        // Calculate stats
+        
         $stats = [
             'total' => $allReports->count(),
             'kritis' => $allReports->where('kondisi_air', 'Kritis')->count(),
             'warga_terdampak' => $allReports->sum('warga_terdampak'),
-            'tervalidasi' => $allReports->whereIn('status', ['selesai', 'proses'])->count(), 
+            'tervalidasi' => $allReports->whereIn('status', ['selesai', 'proses', 'diterima'])->count(), 
+            'tidak_tervalidasi' => $allReports->where('status', 'ditolak')->count(),
             'menunggu' => $allReports->where('status', 'menunggu_validasi')->count(),
             'proses' => $allReports->where('status', 'proses')->count(),
             'selesai' => $allReports->where('status', 'selesai')->count(),
         ];
 
-        // Drought distribution mapping
+        
         $distKekeringan = [
             'Rendah' => 0,
             'Sedang' => 0,
@@ -43,14 +44,17 @@ class DashboardController extends Controller
         }
 
         $stats['distribusi_kekeringan'] = $distKekeringan;
+        $stats['rendah'] = $distKekeringan['Rendah'];
+        $stats['sedang'] = $distKekeringan['Sedang'];
+        $stats['tinggi'] = $distKekeringan['Tinggi'];
         $stats['kritis'] = $distKekeringan['Kritis'];
 
-        // Area distribution (for bar chart)
+        
         $stats['distribusi_area'] = $allReports->groupBy('kelurahan')
             ->map(fn($laps) => $laps->sum('warga_terdampak'))
             ->toArray();
 
-        // Latest reports
+        
         $stats['laporan'] = $allReports->sortByDesc('created_at')->take(5);
 
         return $stats;
@@ -60,6 +64,75 @@ class DashboardController extends Controller
     {
         if (auth()->user()->role !== 'admin') abort(403);
         $data = $this->getDashboardData();
+
+        
+        $laporanPrioritas = \App\Models\Laporan::where('status', '!=', 'draft')
+            ->with('user')
+            ->orderBy('durasi_kekeringan', 'desc')
+            ->get();
+
+        $laporanPrioritas->each(function ($laporan) {
+            if ($laporan->kondisi_air === 'Air tidak tersedia') {
+                $laporan->tingkat_kekeringan = 'Kritis';
+                $laporan->badge_color = '#ef4444';
+            } elseif ($laporan->kondisi_air === 'Ketersediaan air tidak mencukupi') {
+                $laporan->tingkat_kekeringan = 'Tinggi';
+                $laporan->badge_color = '#f97316';
+            } elseif ($laporan->kondisi_air === 'Ketersediaan air mulai berkurang') {
+                $laporan->tingkat_kekeringan = 'Sedang';
+                $laporan->badge_color = '#eab308';
+            } else {
+                $laporan->tingkat_kekeringan = 'Rendah';
+                $laporan->badge_color = '#10b981';
+            }
+
+            $skor = 0;
+            if ($laporan->durasi_kekeringan >= 30) $skor += 3;
+            elseif ($laporan->durasi_kekeringan >= 14) $skor += 2;
+            else $skor += 1;
+
+            if ($laporan->warga_terdampak >= 200) $skor += 3;
+            elseif ($laporan->warga_terdampak >= 100) $skor += 2;
+            else $skor += 1;
+
+            if ($laporan->kondisi_air === 'Air tidak tersedia') $skor += 3;
+            elseif ($laporan->kondisi_air === 'Ketersediaan air tidak mencukupi') $skor += 2;
+            else $skor += 1;
+
+            if ($skor >= 7) {
+                $laporan->level_kondisi = 'Darurat';
+                $laporan->level_color = '#dc2626';
+            } elseif ($skor >= 5) {
+                $laporan->level_kondisi = 'Siaga';
+                $laporan->level_color = '#f97316';
+            } else {
+                $laporan->level_kondisi = 'Waspada';
+                $laporan->level_color = '#eab308';
+            }
+
+            $laporan->kode = 'R' . str_pad($laporan->id, 3, '0', STR_PAD_LEFT);
+        });
+
+        $data['laporanPrioritas'] = $laporanPrioritas;
+
+        // Keterangan Ranking (4 tertinggi)
+        // Sort by: Kritis > Tinggi > Sedang > Rendah, then warga_terdampak desc
+        $data['desaRanking'] = \App\Models\Laporan::where('status', '!=', 'draft')
+            ->get()
+            ->map(function($l) {
+                if ($l->kondisi_air === 'Air tidak tersedia') { $l->priority = 4; $l->tipe = 'kritis'; $l->status_text = 'Kritis'; $l->warna_text = 'Merah'; $l->desc = 'Kondisi darurat, semua sumber air mengering. Diperlukan bantuan segera.'; }
+                elseif ($l->kondisi_air === 'Ketersediaan air tidak mencukupi') { $l->priority = 3; $l->tipe = 'tinggi'; $l->status_text = 'Tinggi'; $l->warna_text = 'Oranye'; $l->desc = 'Kondisi kekeringan parah, sumber air mulai menipis. Membutuhkan bantuan dalam waktu dekat.'; }
+                elseif ($l->kondisi_air === 'Ketersediaan air mulai berkurang') { $l->priority = 2; $l->tipe = 'sedang'; $l->status_text = 'Sedang'; $l->warna_text = 'Kuning'; $l->desc = 'Kondisi mulai kering, ketersediaan air berkurang. Perlu pemantauan dan antisipasi.'; }
+                else { $l->priority = 1; $l->tipe = 'rendah'; $l->status_text = 'Rendah'; $l->warna_text = 'Hijau'; $l->desc = 'Kondisi masih aman, ketersediaan air cukup. Tetap dilakukan pemantauan rutin.'; }
+                return $l;
+            })
+            ->sort(function($a, $b) {
+                if ($a->priority !== $b->priority) return $b->priority <=> $a->priority;
+                return $b->warga_terdampak <=> $a->warga_terdampak;
+            })
+            ->take(5) // Ambil 5 sesuai request terakhir user (Purwosari, Panggang, Saptosari, Tanjungsari, Tepus)
+            ->values();
+
         return view('admin.dashboard', $data);
     }
 
@@ -82,7 +155,13 @@ class DashboardController extends Controller
         }
 
         if ($request->filled('status') && $request->status !== 'Semua Status') {
-            $query->where('status', strtolower(str_replace(' ', '_', $request->status)));
+            if ($request->status === 'Tervalidasi') {
+                $query->whereIn('status', ['diterima', 'proses', 'selesai']);
+            } elseif ($request->status === 'Tidak tervalidasi') {
+                $query->where('status', 'ditolak');
+            } else {
+                $query->where('status', strtolower(str_replace(' ', '_', $request->status)));
+            }
         }
 
         $laporans = $query->orderBy('created_at', 'desc')->get();
@@ -90,20 +169,108 @@ class DashboardController extends Controller
         return view('petugas.laporan', compact('laporans'));
     }
 
+    public function showLaporan($id)
+    {
+        if (auth()->user()->role !== 'petugas') abort(403);
+        $laporan = \App\Models\Laporan::where('id', $id)
+                    ->where('user_id', auth()->id())
+                    ->where('status', '!=', 'draft')
+                    ->firstOrFail();
+        return view('petugas.show_laporan', compact('laporan'));
+    }
+
+    public function editLaporanList($id)
+    {
+        if (auth()->user()->role !== 'petugas') abort(403);
+        $laporan = \App\Models\Laporan::where('id', $id)
+                    ->where('user_id', auth()->id())
+                    ->where('status', '!=', 'draft')
+                    ->firstOrFail();
+
+        if (!$laporan->isEditable()) {
+            return redirect()->route('petugas.show_laporan', $id)
+                ->with('error', 'Laporan tidak dapat diedit setelah divalidasi oleh Admin.');
+        }
+
+        $kelurahanString = auth()->user()->kelurahan;
+        $kelurahans = $kelurahanString ? array_map('trim', explode(',', $kelurahanString)) : [];
+
+        return view('petugas.edit_laporan_list', compact('laporan', 'kelurahans'));
+    }
+
+    public function updateLaporanFromList(Request $request, $id)
+    {
+        if (auth()->user()->role !== 'petugas') abort(403);
+        $laporan = \App\Models\Laporan::where('id', $id)
+                    ->where('user_id', auth()->id())
+                    ->firstOrFail();
+
+        // Business rule: hanya bisa edit jika masih menunggu validasi
+        if (!$laporan->isEditable()) {
+            return redirect()->route('petugas.laporan.index')
+                ->with('error', 'Laporan tidak dapat diedit setelah divalidasi.');
+        }
+
+        $request->validate([
+            'kelurahan'         => 'required|string',
+            'kondisi_air'       => 'required|string',
+            'warga_terdampak'   => 'required|integer|min:0',
+            'durasi_kekeringan' => 'required|integer|min:0',
+            'keterangan'        => 'required|string',
+            'foto_upload'       => 'nullable|array|max:3',
+            'foto_upload.*'     => 'image|max:10240',
+        ], [
+            'kelurahan.required'         => 'Kelurahan wajib dipilih.',
+            'kondisi_air.required'       => 'Kondisi air wajib dipilih.',
+            'warga_terdampak.required'   => 'Jumlah warga terdampak wajib diisi.',
+            'durasi_kekeringan.required' => 'Durasi kekeringan wajib diisi.',
+            'keterangan.required'        => 'Keterangan wajib diisi.',
+        ]);
+
+        // Kelola foto
+        $existingFotos = [];
+        if ($laporan->foto) {
+            $decoded = json_decode($laporan->foto, true);
+            $existingFotos = is_array($decoded) ? $decoded : [$laporan->foto];
+        }
+
+        if ($request->filled('removed_fotos')) {
+            $removed = json_decode($request->removed_fotos, true);
+            if (is_array($removed)) {
+                foreach ($removed as $path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+                    $existingFotos = array_values(array_filter($existingFotos, fn($f) => $f !== $path));
+                }
+            }
+        }
+
+        if ($request->hasFile('foto_upload')) {
+            foreach ($request->file('foto_upload') as $file) {
+                if (count($existingFotos) < 3) {
+                    $existingFotos[] = $file->store('laporan_fotos', 'public');
+                }
+            }
+        }
+
+        $laporan->update([
+            'kelurahan'         => $request->kelurahan,
+            'kondisi_air'       => $request->kondisi_air,
+            'warga_terdampak'   => $request->warga_terdampak,
+            'durasi_kekeringan' => $request->durasi_kekeringan,
+            'keterangan'        => $request->keterangan,
+            'foto'              => !empty($existingFotos) ? json_encode(array_values($existingFotos)) : null,
+        ]);
+
+        return redirect()->route('petugas.laporan.index')
+            ->with('success', 'Laporan berhasil diperbarui.');
+    }
+
     public function createLaporan()
     {
         if (auth()->user()->role !== 'petugas') abort(403);
         
-        $kecamatanList = [
-            'Purwosari' => ['Giriasih', 'Giricahyo', 'Girijati'],
-            'Panggang' => ['Giriharjo', 'Girijati Panggang'],
-            'Saptosari' => ['Jetis', 'Planjan'],
-            'Tanjungsari' => ['Kemadang', 'Banjarejo'],
-            'Tepus' => ['Tepus', 'Purwodadi']
-        ];
-        
-        $userKecamatan = trim(str_replace('Petugas', '', auth()->user()->name));
-        $kelurahans = $kecamatanList[$userKecamatan] ?? [];
+        $kelurahanString = auth()->user()->kelurahan;
+        $kelurahans = $kelurahanString ? array_map('trim', explode(',', $kelurahanString)) : [];
 
         return view('petugas.create_laporan', compact('kelurahans'));
     }
@@ -116,12 +283,31 @@ class DashboardController extends Controller
             'kecamatan' => 'required|string',
             'kelurahan' => 'required|string',
             'kondisi_air' => 'required|string',
-            'warga_terdampak' => 'required|integer',
-            'durasi_kekeringan' => 'required|integer',
+            'warga_terdampak' => 'required|integer|min:1',
+            'durasi_kekeringan' => 'required|integer|min:1',
             'foto_upload' => 'nullable|array|max:3',
             'foto_upload.*' => 'image|max:10240',
             'keterangan' => 'required|string',
         ];
+
+        if ($request->action === 'draft') {
+            if (empty($request->kelurahan) && empty($request->kondisi_air) && 
+                empty($request->warga_terdampak) && empty($request->durasi_kekeringan) && 
+                empty($request->keterangan) && !$request->hasFile('foto_upload')) {
+                return redirect()->back()->withInput()->with('error', 'Minimal satu field harus diisi untuk menyimpan draft.');
+            }
+
+            $rules = [
+                'kecamatan' => 'nullable|string',
+                'kelurahan' => 'nullable|string',
+                'kondisi_air' => 'nullable|string',
+                'warga_terdampak' => 'nullable|integer|min:1',
+                'durasi_kekeringan' => 'nullable|integer|min:1',
+                'foto_upload' => 'nullable|array|max:3',
+                'foto_upload.*' => 'image|max:10240',
+                'keterangan' => 'nullable|string',
+            ];
+        }
 
         $messages = [
             'kelurahan.required' => 'Kelurahan wajib dipilih.',
@@ -176,16 +362,8 @@ class DashboardController extends Controller
         if (auth()->user()->role !== 'petugas') abort(403);
         $laporan = \App\Models\Laporan::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
         
-        $kecamatanList = [
-            'Purwosari' => ['Giriasih', 'Giricahyo', 'Girijati'],
-            'Panggang' => ['Giriharjo', 'Girijati Panggang'],
-            'Saptosari' => ['Jetis', 'Planjan'],
-            'Tanjungsari' => ['Kemadang', 'Banjarejo'],
-            'Tepus' => ['Tepus', 'Purwodadi']
-        ];
-        
-        $userKecamatan = trim(str_replace('Petugas', '', auth()->user()->name));
-        $kelurahans = $kecamatanList[$userKecamatan] ?? [];
+        $kelurahanString = auth()->user()->kelurahan;
+        $kelurahans = $kelurahanString ? array_map('trim', explode(',', $kelurahanString)) : [];
 
         return view('petugas.create_laporan', compact('laporan', 'kelurahans'));
     }
@@ -199,12 +377,35 @@ class DashboardController extends Controller
             'kecamatan' => 'required|string',
             'kelurahan' => 'required|string',
             'kondisi_air' => 'required|string',
-            'warga_terdampak' => 'required|integer',
-            'durasi_kekeringan' => 'required|integer',
+            'warga_terdampak' => 'required|integer|min:1',
+            'durasi_kekeringan' => 'required|integer|min:1',
             'foto_upload' => 'nullable|array|max:3',
             'foto_upload.*' => 'image|max:10240',
             'keterangan' => 'required|string',
         ];
+
+        if ($request->action === 'draft') {
+            $existingFotosCount = $laporan->foto ? count(json_decode($laporan->foto, true) ?? [$laporan->foto]) : 0;
+            $removedCount = $request->filled('removed_fotos') ? count(json_decode($request->removed_fotos, true) ?? []) : 0;
+            $finalFotosCount = $existingFotosCount - $removedCount + ($request->hasFile('foto_upload') ? count($request->file('foto_upload')) : 0);
+
+            if (empty($request->kelurahan) && empty($request->kondisi_air) && 
+                empty($request->warga_terdampak) && empty($request->durasi_kekeringan) && 
+                empty($request->keterangan) && $finalFotosCount == 0) {
+                return redirect()->back()->withInput()->with('error', 'Minimal satu field harus diisi untuk menyimpan draft.');
+            }
+
+            $rules = [
+                'kecamatan' => 'nullable|string',
+                'kelurahan' => 'nullable|string',
+                'kondisi_air' => 'nullable|string',
+                'warga_terdampak' => 'nullable|integer|min:1',
+                'durasi_kekeringan' => 'nullable|integer|min:1',
+                'foto_upload' => 'nullable|array|max:3',
+                'foto_upload.*' => 'image|max:10240',
+                'keterangan' => 'nullable|string',
+            ];
+        }
 
         $messages = [
             'kelurahan.required' => 'Kelurahan wajib dipilih.',
@@ -356,10 +557,31 @@ class DashboardController extends Controller
         return redirect()->route('admin.create_petugas')->with('success', 'Akun petugas berhasil dibuat!');
     }
 
-    public function adminValidasi()
+    public function deletePetugas($id)
     {
         if (auth()->user()->role !== 'admin') abort(403);
-        $laporans = \App\Models\Laporan::where('status', '!=', 'draft')->orderBy('created_at', 'desc')->get();
+        $user = \App\Models\User::where('id', $id)->where('role', 'petugas')->firstOrFail();
+        $user->delete();
+        return redirect()->back()->with('success_delete', 'Akun petugas berhasil dihapus!');
+    }
+
+    public function adminValidasi(Request $request)
+    {
+        if (auth()->user()->role !== 'admin') abort(403);
+        
+        $query = \App\Models\Laporan::where('status', '!=', 'draft');
+
+        if ($request->filled('tanggal')) {
+            $query->whereDate('created_at', $request->tanggal);
+        }
+
+        if ($request->filled('kecamatan')) {
+            $query->where('kecamatan', 'like', '%' . $request->kecamatan . '%');
+        }
+
+        $perPage = $request->input('per_page', 10);
+        $laporans = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
         return view('admin.validasi', compact('laporans'));
     }
 
@@ -384,5 +606,25 @@ class DashboardController extends Controller
         }
 
         return redirect()->route('admin.validasi.index')->with('success', 'Status validasi laporan berhasil diperbarui.');
+    }
+
+    public function deleteLaporanAdmin($id)
+    {
+        if (auth()->user()->role !== 'admin') abort(403);
+        $laporan = \App\Models\Laporan::findOrFail($id);
+        
+        if ($laporan->foto) {
+            $fotos = json_decode($laporan->foto, true);
+            if (is_array($fotos)) {
+                foreach ($fotos as $foto) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($foto);
+                }
+            } else {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->foto);
+            }
+        }
+        
+        $laporan->delete();
+        return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
     }
 }

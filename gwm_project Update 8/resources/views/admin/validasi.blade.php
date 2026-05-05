@@ -321,6 +321,24 @@
             font-weight: 600;
             cursor: pointer;
         }
+
+        .btn-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 6px;
+            color: #ef4444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background-color: #ef4444;
+            color: white;
+        }
         
         .location-info {
             display: flex;
@@ -336,6 +354,52 @@
         .location-kecamatan {
             font-size: 12px;
             color: var(--text-gray);
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 4px;
+        }
+        
+        .pagination li.page-item {
+            display: inline-block;
+        }
+        
+        .pagination li.page-item a.page-link, 
+        .pagination li.page-item span.page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            padding: 0 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-dark);
+            text-decoration: none;
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .pagination li.page-item.active span.page-link {
+            background-color: var(--text-dark);
+            color: white;
+            border-color: var(--text-dark);
+        }
+        
+        .pagination li.page-item.disabled span.page-link {
+            color: #cbd5e1;
+            background-color: #f8fafc;
+            cursor: not-allowed;
+        }
+        
+        .pagination li.page-item a.page-link:hover {
+            background-color: #f1f5f9;
         }
     </style>
 </head>
@@ -484,24 +548,33 @@
         </div>
 
         <div class="card">
-            <div class="table-header-controls">
+            <form method="GET" action="{{ route('admin.validasi.index') }}" id="filterForm" class="table-header-controls" style="margin: 0;">
                 <div class="entries-control">
-                    <select>
-                        <option>10</option>
-                        <option>25</option>
-                        <option>50</option>
+                    <select name="per_page" onchange="document.getElementById('filterForm').submit()">
+                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                     </select>
                     Entries Per Page
                 </div>
                 
                 <div class="search-control">
-                    <span style="font-size: 14px; font-weight: 600;">Filter Berdasarkan:</span>
-                    <select class="filter-select">
-                        <option>Kecamatan/Kelurahan</option>
+                    <span style="font-size: 14px; font-weight: 600;">Filter:</span>
+                    <input type="date" name="tanggal" class="search-input" value="{{ request('tanggal') }}" style="width: auto;">
+                    <select name="kecamatan" class="filter-select">
+                        <option value="">Semua Kecamatan</option>
+                        <option value="Purwosari" {{ request('kecamatan') == 'Purwosari' ? 'selected' : '' }}>Purwosari</option>
+                        <option value="Panggang" {{ request('kecamatan') == 'Panggang' ? 'selected' : '' }}>Panggang</option>
+                        <option value="Saptosari" {{ request('kecamatan') == 'Saptosari' ? 'selected' : '' }}>Saptosari</option>
+                        <option value="Tanjungsari" {{ request('kecamatan') == 'Tanjungsari' ? 'selected' : '' }}>Tanjungsari</option>
+                        <option value="Tepus" {{ request('kecamatan') == 'Tepus' ? 'selected' : '' }}>Tepus</option>
                     </select>
-                    <input type="text" class="search-input" placeholder="Search...">
+                    <button type="submit" style="padding: 8px 16px; background-color: var(--text-dark); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">Filter</button>
+                    @if(request('tanggal') || request('kecamatan') || request('per_page'))
+                        <a href="{{ route('admin.validasi.index') }}" style="padding: 8px 16px; background-color: #f1f5f9; color: var(--text-dark); border: 1px solid var(--border); border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">Reset</a>
+                    @endif
                 </div>
-            </div>
+            </form>
             
             <table>
                 <thead>
@@ -517,7 +590,7 @@
                 <tbody>
                     @forelse($laporans as $index => $lap)
                         <tr>
-                            <td>{{ $index + 1 }}.</td>
+                            <td>{{ $laporans->firstItem() + $index }}.</td>
                             <td>
                                 <div class="location-info">
                                     <span class="location-kelurahan">Kelurahan {{ $lap->kelurahan }}</span>
@@ -538,8 +611,8 @@
                                 <a href="{{ route('admin.validasi.detail', $lap->id) }}" class="btn-view">View</a>
                             </td>
                             <td style="text-align: center;">
-                                @if($lap->status == 'menunggu_validasi')
-                                    <div class="validasi-actions" style="justify-content: center;">
+                                <div class="validasi-actions" style="justify-content: center;">
+                                    @if($lap->status == 'menunggu_validasi')
                                         <form action="{{ route('admin.validasi.action', $lap->id) }}" method="POST" style="margin: 0;">
                                             @csrf
                                             <input type="hidden" name="action" value="approve">
@@ -550,8 +623,22 @@
                                             <input type="hidden" name="action" value="reject">
                                             <button type="submit" class="btn-reject" onclick="return confirm('Yakin ingin menolak laporan ini?')">Reject</button>
                                         </form>
-                                    </div>
-                                @endif
+                                    @else
+                                        <button type="button" class="btn-approve" onclick="alert('Laporan ini sudah {{ $lap->status == 'ditolak' ? 'ditolak' : 'disetujui' }} dan tidak dapat diubah lagi.')">Approve</button>
+                                        <button type="button" class="btn-reject" onclick="alert('Laporan ini sudah {{ $lap->status == 'ditolak' ? 'ditolak' : 'disetujui' }} dan tidak dapat diubah lagi.')">Reject</button>
+                                    @endif
+
+                                    <form action="{{ route('admin.validasi.destroy', $lap->id) }}" method="POST" style="margin: 0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-delete" onclick="return confirm('Yakin ingin menghapus laporan ini?')" title="Hapus Laporan">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -561,6 +648,17 @@
                     @endforelse
                 </tbody>
             </table>
+
+            @if($laporans->hasPages())
+                <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 14px; color: var(--text-gray);">
+                        Showing {{ $laporans->firstItem() ?? 0 }} to {{ $laporans->lastItem() ?? 0 }} of {{ $laporans->total() }} entries
+                    </div>
+                    <div>
+                        {{ $laporans->appends(request()->query())->links('pagination::bootstrap-4') }}
+                    </div>
+                </div>
+            @endif
         </div>
     </main>
 </body>
