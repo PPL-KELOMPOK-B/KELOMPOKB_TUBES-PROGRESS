@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    private function getDashboardData($userId = null)
+    private function getDashboardData($userId = null, Request $request = null)
     {
         $query = \App\Models\Laporan::where('status', '!=', 'draft');
         
@@ -51,8 +51,26 @@ class DashboardController extends Controller
             ->map(fn($laps) => $laps->sum('warga_terdampak'))
             ->toArray();
 
-        
-        $stats['laporan'] = $allReports->sortByDesc('created_at')->take(5);
+        $laporanQuery = \App\Models\Laporan::where('user_id', $userId)
+            ->where('status', '!=', 'draft');
+
+        if ($request && $request->filled('search')) {
+            $laporanQuery->where('kelurahan', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request && $request->filled('status') && $request->status !== 'Semua Status') {
+            if ($request->status === 'Tervalidasi') {
+                $laporanQuery->whereIn('status', ['diterima', 'proses', 'selesai']);
+            } elseif ($request->status === 'Tidak tervalidasi') {
+                $laporanQuery->where('status', 'ditolak');
+            } else {
+                $laporanQuery->where('status', strtolower(str_replace(' ', '_', $request->status)));
+            }
+        }
+
+        $showAll = $request && ($request->filled('search') || ($request->filled('status') && $request->status !== 'Semua Status'));
+        $stats['laporan'] = $laporanQuery->with('tindakLanjuts')->orderBy('created_at', 'desc');
+        $stats['laporan'] = $showAll ? $stats['laporan']->get() : $stats['laporan']->take(5)->get();
 
         return $stats;
     }
@@ -123,10 +141,10 @@ class DashboardController extends Controller
         return view('admin.dashboard', $data);
     }
 
-    public function petugasIndex()
+    public function petugasIndex(Request $request)
     {
         if (auth()->user()->role !== 'petugas') abort(403);
-        $data = $this->getDashboardData(auth()->id());
+        $data = $this->getDashboardData(auth()->id(), $request);
         return view('petugas.dashboard', $data);
     }
 
@@ -184,6 +202,86 @@ class DashboardController extends Controller
         $kelurahans = $kelurahanString ? array_map('trim', explode(',', $kelurahanString)) : [];
 
         return view('petugas.edit_laporan_list', compact('laporan', 'kelurahans'));
+    }
+
+    public function historyIndex(Request $request)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $query = \App\Models\Laporan::where('status', '!=', 'draft');
+
+        // Search
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('kelurahan', 'like', "%{$search}%")
+                ->orWhere('kecamatan', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+
+        $laporans = $query
+            ->with('tindakLanjuts')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // Tambah skor & tingkat kekeringan
+        $laporans->getCollection()->transform(function ($laporan) {
+
+            $score = $this->calculatePriorityScore($laporan);
+
+            $laporan->skor_prioritas = $score;
+            $laporan->tingkat_kekeringan = $this->getPriorityLevel($score);
+
+            return $laporan;
+        });
+
+        // Filter tingkat kekeringan
+        if ($request->filled('tingkat')) {
+
+            $filtered = $laporans->getCollection()->filter(function ($lap) use ($request) {
+
+                return strtolower($lap->tingkat_kekeringan)
+                    == strtolower($request->tingkat);
+            });
+
+            $laporans->setCollection(
+                $filtered->values()
+            );
+        }
+
+        return view(
+            'admin.history',
+            compact('laporans')
+        );
+    }
+    public function historyDetail($id)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $laporan = \App\Models\Laporan::with('tindakLanjuts')
+        ->findOrFail($id);
+
+        $laporan->skor_prioritas =
+            $this->calculatePriorityScore($laporan);
+
+        $laporan->tingkat_kekeringan =
+            $this->getPriorityLevel(
+                $laporan->skor_prioritas
+            );
+
+        return view(
+            'admin.history_detail',
+            compact('laporan')
+        );
     }
 
     public function updateLaporanFromList(Request $request, $id)

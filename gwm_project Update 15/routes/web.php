@@ -107,4 +107,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/petugas/notifikasi', [NotificationController::class, 'index'])->name('petugas.notifikasi');
     Route::get('/petugas/notifikasi/read/{id}', [NotificationController::class, 'markAsRead'])->name('petugas.notifikasi.read');
     Route::post('/petugas/notifikasi/read-all', [NotificationController::class, 'markAllAsRead'])->name('petugas.notifikasi.read_all');
+
+    // History Admin
+    Route::get('/admin/history', [DashboardController::class, 'historyIndex'])->name('admin.history');
+    Route::get('/admin/history/{id}', [DashboardController::class, 'historyDetail'])->name('admin.history.detail');
 });

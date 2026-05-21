@@ -316,6 +316,64 @@
             color: var(--text-dark);
         }
 
+        .filter-section {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            background: white;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .search-box input::placeholder {
+            color: #94a3b8;
+        }
+
+        .filter-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            min-width: 220px;
+        }
+
+        .filter-box select {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-dark);
+            cursor: pointer;
+            appearance: none;
+        }
+
         .chart-container-inner {
             height: 250px;
             width: 100%;
@@ -661,6 +719,25 @@
                 </div>
             </div>
         </div>
+
+        <form method="GET" action="{{ route('petugas.dashboard') }}" class="filter-section">
+            <div class="search-box">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" name="search" placeholder="Cari lokasi..." value="{{ request('search') }}">
+            </div>
+            <div class="filter-box">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                <select name="status" onchange="this.form.submit()">
+                    <option value="Semua Status" {{ request('status') == 'Semua Status' ? 'selected' : '' }}>Semua Status</option>
+                    <option value="Tervalidasi" {{ request('status') == 'Tervalidasi' ? 'selected' : '' }}>Tervalidasi</option>
+                    <option value="Tidak tervalidasi" {{ request('status') == 'Tidak tervalidasi' ? 'selected' : '' }}>Tidak Tervalidasi</option>
+                    <option value="Menunggu Validasi" {{ request('status') == 'Menunggu Validasi' ? 'selected' : '' }}>Menunggu Validasi</option>
+                    <option value="Proses" {{ request('status') == 'Proses' ? 'selected' : '' }}>Sedang Diproses</option>
+                    <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                </select>
+                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto; pointer-events: none;"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+        </form>
 
         <div class="card">
             <div class="card-header-between">
