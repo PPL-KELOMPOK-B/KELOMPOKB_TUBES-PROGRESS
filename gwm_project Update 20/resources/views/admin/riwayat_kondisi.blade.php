@@ -561,8 +561,8 @@
                         </span>
                         <select name="kondisi" class="filter-select">
                             <option value="Semua Kondisi" {{ request('kondisi', 'Semua Kondisi') === 'Semua Kondisi' ? 'selected' : '' }}>Semua Kondisi</option>
-                            <option value="Waspada" {{ request('kondisi') === 'Waspada' ? 'selected' : '' }}>Waspada</option>
-                            <option value="Siaga"   {{ request('kondisi') === 'Siaga'   ? 'selected' : '' }}>Siaga</option>
+                            <option value="Waspada" {{ request('kondisi') === 'Waspada' ? 'selected' : '' }}>Sedang</option>
+                            <option value="Siaga"   {{ request('kondisi') === 'Siaga'   ? 'selected' : '' }}>Tinggi</option>
                             <option value="Kritis"  {{ request('kondisi') === 'Kritis'  ? 'selected' : '' }}>Kritis</option>
                         </select>
                     </div>
@@ -600,11 +600,11 @@
             </span>
             <span class="stat-chip waspada">
                 <span class="dot dot-waspada"></span>
-                Waspada: {{ $countWaspada }}
+                Sedang: {{ $countWaspada }}
             </span>
             <span class="stat-chip siaga">
                 <span class="dot dot-siaga"></span>
-                Siaga: {{ $countSiaga }}
+                Tinggi: {{ $countSiaga }}
             </span>
             <span class="stat-chip kritis">
                 <span class="dot dot-kritis"></span>
@@ -641,10 +641,10 @@
                                     // Map kondisi_air to badge label + class
                                     $kondisiAir = $laporan->kondisi_air ?? '';
                                     if ($kondisiAir === 'Ketersediaan air mulai berkurang') {
-                                        $kondisiLabel = 'Waspada';
+                                        $kondisiLabel = 'Sedang';
                                         $kondisiClass = 'badge-waspada';
                                     } elseif ($kondisiAir === 'Ketersediaan air tidak mencukupi') {
-                                        $kondisiLabel = 'Siaga';
+                                        $kondisiLabel = 'Tinggi';
                                         $kondisiClass = 'badge-siaga';
                                     } elseif ($kondisiAir === 'Air tidak tersedia') {
                                         $kondisiLabel = 'Kritis';
